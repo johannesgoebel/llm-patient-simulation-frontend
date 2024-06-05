@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "4ed8c6879a3d4df5f4b26320b2e0246e",
+    "revision": "bc56f1a2f8b6e0f0bb5fec062ccdb9df",
     "url": "/llm-patient-simulation-frontend/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/llm-patient-simulation-frontend/static/css/2.98036eff.chunk.css"
   },
   {
-    "revision": "d1123301eadea4c46aea",
+    "revision": "08a994dcca7d83a22dc0",
     "url": "/llm-patient-simulation-frontend/static/css/main.cfccadea.chunk.css"
   },
   {
@@ -24,8 +24,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/llm-patient-simulation-frontend/static/js/3.e4410f6b.chunk.js"
   },
   {
-    "revision": "d1123301eadea4c46aea",
-    "url": "/llm-patient-simulation-frontend/static/js/main.5d8a30fc.chunk.js"
+    "revision": "08a994dcca7d83a22dc0",
+    "url": "/llm-patient-simulation-frontend/static/js/main.b65fadc3.chunk.js"
   },
   {
     "revision": "e92db114e9603791a50e",
