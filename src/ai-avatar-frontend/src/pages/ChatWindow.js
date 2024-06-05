@@ -13,13 +13,13 @@ const ChatWindow = () => {
   const fetchCurrentPromptData = async () => {
     try {
       const response = await fetch('https://llm-patient-simulation-backend.vercel.app/conversation/current_prompt', {
-        mode: 'no-cors',
         method: 'GET',
         headers: {
           'Accept': 'application/json',
         },
       });
       if (!response.ok) {
+        console.log(response);
         throw new Error('Network response was not ok');
       }
       const result = await response.json();
@@ -33,7 +33,6 @@ const ChatWindow = () => {
     try {
         const url = `https://llm-patient-simulation-backend.vercel.app/conversation/vignette?name=${encodeURIComponent(name)}`;
         const response = await fetch(url, {
-          mode: 'no-cors',
           method: 'POST'
         });
 
@@ -52,13 +51,13 @@ const ChatWindow = () => {
   const fetchSystemPromptData = async () => {
     try {
       const response = await fetch('https://llm-patient-simulation-backend.vercel.app/conversation/load_case_vignette', {
-        mode: 'no-cors',
         method: 'GET',
         headers: {
           'Accept': 'application/json',
         },
       });
       if (!response.ok) {
+        console.log(response);
         throw new Error('Network response was not ok');
       }
       
@@ -87,7 +86,6 @@ const ChatWindow = () => {
       const url = `https://llm-patient-simulation-backend.vercel.app/retrieve_answer?message=${encodeURIComponent(input)}&api_key=${apiKey}`;
 
       const response = await fetch(url, {
-        mode: 'no-cors',
         method: 'POST',
         headers: {
           'accept': 'application/json'
@@ -95,6 +93,7 @@ const ChatWindow = () => {
       });
   
       if (!response.ok) {
+        console.log(response);
         throw new Error('Failed to retrieve answer');
       }
   
