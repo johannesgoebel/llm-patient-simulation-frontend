@@ -45,17 +45,6 @@ const ChatWindow = () => {
     if (!input || !apiKey) return; // Check if input or apiKey is empty
   
     try {
-      const basicAuthChatWithPatient = localStorage.getItem('basicAuthChatWithPatient');
-      if (!basicAuthChatWithPatient) {
-        throw new Error('Authentication token not found');
-      }
-      const base64Credentials = basicAuthChatWithPatient.split(' ')[1];
-      const credentials = atob(base64Credentials);
-      const [username, password] = credentials.split(':');
-
-      console.log('Username:', username); // Output: "username"
-      console.log('Password:', password); // Output: "Password
-
       const url = `https://llm-patient-simulation-backend.vercel.app/retrieve_answer?message=${encodeURIComponent(input)}&api_key=${apiKey}`;
 
       const response = await fetch(url, {
