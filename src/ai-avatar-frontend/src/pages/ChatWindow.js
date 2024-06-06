@@ -1,72 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ChatWindow = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [error, setError] = useState(null);
-  const [systemPromptData, setSystemPromptData] = useState(null);
-  const [currentPromptData, setCurrentPromptData] = useState(null);
   const [vignette, setVignette] = useState('Astrid Seeger');
   const [apiKey, setApiKey] = useState('');
-
-  const fetchCurrentPromptData = async () => {
-    try {
-      const response = await fetch('https://llm-patient-simulation-backend.vercel.app/conversation/current_prompt', {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
-      if (!response.ok) {
-        console.log(response);
-        throw new Error('Network response was not ok');
-      }
-      const result = await response.json();
-      setCurrentPromptData(result.message);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
 
   const handleButtonClick = async (name) => {
     try {
         const url = `https://llm-patient-simulation-backend.vercel.app/conversation/vignette?name=${encodeURIComponent(name)}`;
         const response = await fetch(url, {
-          method: 'POST'
+            method: 'POST'
         });
 
         if (response.ok) {
             setVignette(name);
             setMessages([]);
-
         } else {
-            console.error('Failed to update vignette');
+            // Check for CORS issue
+            if (response.status === 0) {
+                console.error('Failed to update vignette: CORS issue detected.');
+            }
+            // Check for network problem
+            else if (!response.ok && !response.status) {
+                console.error('Failed to update vignette: Network error.');
+            } else {
+                // Other HTTP errors
+                const errorMessage = await response.text();
+                console.error(`Failed to update vignette: ${response.status} - ${errorMessage}`);
+            }
         }
     } catch (error) {
-        console.error('Error:', error);
+        // Handle general errors
+        console.error('Error:', error.message);
     }
-  };
+};
 
-  const fetchSystemPromptData = async () => {
-    try {
-      const response = await fetch('https://llm-patient-simulation-backend.vercel.app/conversation/load_case_vignette', {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
-      if (!response.ok) {
-        console.log(response);
-        throw new Error('Network response was not ok');
-      }
-      
-      const result = await response.json();
-      setSystemPromptData(result.message);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
+
+
 
   const sendMessage = async () => {
     if (!input || !apiKey) return; // Check if input or apiKey is empty
@@ -100,18 +73,12 @@ const ChatWindow = () => {
       const data = await response.json();
       setMessages([...messages, { user: 'Me', text: input }, { user: 'Bot', text: data.answer }]);
       setInput('');
-      fetchCurrentPromptData();
       setError(null);
       
     } catch (error) {
       setError(error.message);
     }
   };
-
-  useEffect(() => {
-    fetchSystemPromptData();
-    fetchCurrentPromptData();
-  }, []);
 
   const renderMessage = (msg, index) => {
     const isUser = msg.user === 'Me';
@@ -136,7 +103,7 @@ const ChatWindow = () => {
           <div className="h-100 d-flex flex-column justify-content-center align-items-center">
             <div>
               <h4 style={{ margin: "20px" }}>Auswahl der Fallvignette</h4>
-              <div class ="row">
+              <div className ="row">
                 <button
                   type="button"
                   className={`btn btn-lg ${vignette === 'Astrid Seeger' ? 'btn-primary' : 'btn-secondary'}`}
@@ -152,10 +119,10 @@ const ChatWindow = () => {
                   Michael Schulze
                 </button>
 
-                <div class = "row">
-                  <div class="mb-3">
-                    <label for="apiKeyInput" class="form-label"><h4 style={{ margin: "20px" }}>API Key</h4></label>
-                    <input type="text" class="form-control" id="apiKeyInput" placeholder="Hier Key einfügen" value={apiKey} onChange={handleApiKeyChange}></input>
+                <div className = "row">
+                  <div className="mb-3">
+                    <label htmlFor="apiKeyInput" className="form-label"><h4 style={{ margin: "20px" }}>API Key</h4></label>
+                    <input type="text" className="form-control" id="apiKeyInput" placeholder="Hier Key einfügen" value={apiKey} onChange={handleApiKeyChange}></input>
                   </div>
 
                 </div>
