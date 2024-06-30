@@ -112,3 +112,11 @@
   border: 1px solid grey;
   padding-left: 8px;
 }
+
+.rounded-xl {
+  border-radius: 2rem;
+}
+
+.rounded-l {
+  border-radius: 1.4rem;
+}

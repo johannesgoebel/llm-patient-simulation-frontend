@@ -1,71 +1,67 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Dictaphone from './helperFunctions/Dictaphone';
+import { createAudioStreamFromText } from './helperFunctions/audioStreamFromText';
 
 const ChatWindow = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  const [error, setError] = useState(null);
   const [vignette, setVignette] = useState('Astrid Seeger');
   const [apiKey, setApiKey] = useState('');
+  const [dictaphoneState, setDictaphoneState] = useState(1);
+  const [voiceGenState, setVoiceGenState] = useState(true)
 
   const handleButtonClick = async (name) => {
     try {
-        const url = `https://llm-patient-simulation-backend.vercel.app/conversation/vignette?name=${encodeURIComponent(name)}`;
-        const response = await fetch(url, {
-            method: 'POST'
-        });
+      const url = `https://llm-patient-simulation-backend.vercel.app/conversation/vignette?name=${encodeURIComponent(name)}`;
+      const response = await fetch(url, {
+        method: 'POST'
+      });
 
-        if (response.ok) {
-            setVignette(name);
-            setMessages([]);
+      if (response.ok) {
+        setVignette(name);
+        setMessages([]);
+      } else {
+        // Handle errors
+        if (response.status === 0) {
+          console.error('Failed to update vignette: CORS issue detected.');
+        } else if (!response.ok && !response.status) {
+          console.error('Failed to update vignette: Network error.');
         } else {
-            // Check for CORS issue
-            if (response.status === 0) {
-                console.error('Failed to update vignette: CORS issue detected.');
-            }
-            // Check for network problem
-            else if (!response.ok && !response.status) {
-                console.error('Failed to update vignette: Network error.');
-            } else {
-                // Other HTTP errors
-                const errorMessage = await response.text();
-                console.error(`Failed to update vignette: ${response.status} - ${errorMessage}`);
-            }
+          const errorMessage = await response.text();
+          console.error(`Failed to update vignette: ${response.status} - ${errorMessage}`);
         }
+      }
     } catch (error) {
-        // Handle general errors
-        console.error('Error:', error.message);
+      console.error('Error:', error.message);
     }
-};
+  };
 
-
-
-
-  const sendMessage = async () => {
-    if (!input || !apiKey) return; // Check if input or apiKey is empty
-  
+  const sendMessage = async (message) => {
+    if (!message || !apiKey) return;
+    setDictaphoneState(2);
     try {
-      const url = `https://llm-patient-simulation-backend.vercel.app/retrieve_answer?message=${encodeURIComponent(input)}&api_key=${apiKey}`;
-
+      const url = `https://llm-patient-simulation-backend.vercel.app/retrieve_answer?message=${encodeURIComponent(message)}&api_key=${apiKey}`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'accept': 'application/json'
         }
-      });
-  
+      }); 
+      setDictaphoneState(1);
       if (!response.ok) {
-        console.log(response);
         throw new Error('Failed to retrieve answer');
       }
-  
       const data = await response.json();
-      setMessages([...messages, { user: 'Me', text: input }, { user: 'Bot', text: data.answer }]);
+      setMessages([...messages, { user: 'Me', text: message }, { user: 'Bot', text: data.answer }]);
       setInput('');
-      setError(null);
-      
+      setDictaphoneState(1); // Reset dictaphone state after successful message
+      if (voiceGenState){
+        createAudioStreamFromText(data.answer);
+      }
+
     } catch (error) {
-      setError(error.message);
+      console.error('Error sending message:', error);
     }
   };
 
@@ -80,70 +76,81 @@ const ChatWindow = () => {
     );
   };
 
-  // Function to handle API key input change
   const handleApiKeyChange = (e) => {
     setApiKey(e.target.value);
   };
 
   return (
-    <div className="container-fluid d-flex justify-content-center align-items-center" style={{ height: '100vh', overflow: 'hidden' }}>
-      <div className="row" style={{ width: "80%" }}>
-        <div className="col">
-          <div className="h-100 d-flex flex-column justify-content-center align-items-center">
-            <div>
-              <h4 style={{ margin: "20px" }}>Auswahl der Fallvignette</h4>
-              <div className ="row">
-                <button
-                  type="button"
-                  className={`btn btn-lg ${vignette === 'Astrid Seeger' ? 'btn-primary' : 'btn-secondary'}`}
-                  onClick={() => handleButtonClick('Astrid Seeger')}
-                >
-                  Astrid Seeger
-                </button>
-                <button
-                  type="button"
-                  className={`btn btn-lg ${vignette === 'Michael Schulze' ? 'btn-primary' : 'btn-secondary'}`}
-                  onClick={() => handleButtonClick('Michael Schulze')}
-                >
-                  Michael Schulze
-                </button>
-
-                <div className = "row">
+    <div>
+      <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', overflow: 'hidden', background: '#696969' }}>
+        <div className="row" style={{ width: "100%" }}>
+          <div className="col-3">
+            <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={{ color: '#faf8ff', height: '100vh' }}>
+              <div>
+                <h4 style={{ margin: "20px" }}>Auswahl der Fallvignette</h4>
+                <div className="row">
+                  <button
+                    type="button"
+                    className={`btn btn-lg ${vignette === 'Astrid Seeger' ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => handleButtonClick('Astrid Seeger')}
+                  >
+                    Astrid Seeger
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn btn-lg ${vignette === 'Michael Schulze' ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => handleButtonClick('Michael Schulze')}
+                  >
+                    Michael Schulze
+                  </button>
+                </div>
+                <div className="row mt-3">
                   <div className="mb-3">
-                    <label htmlFor="apiKeyInput" className="form-label"><h4 style={{ margin: "20px" }}>API Key</h4></label>
-                    <input type="text" className="form-control" id="apiKeyInput" placeholder="Hier Key einfügen" value={apiKey} onChange={handleApiKeyChange}></input>
+                    <label htmlFor="apiKeyInput" className="form-label">
+                      <h4 style={{ margin: "20px" }}>API Key</h4>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="apiKeyInput"
+                      placeholder="Hier Key einfügen"
+                      value={apiKey}
+                      onChange={handleApiKeyChange}
+                    />
                   </div>
-
+                </div>
+                <div className="form-check form-switch">
+                  <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" onInput={setVoiceGenState}/>
+                  <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Audio generieren</label>
                 </div>
               </div>
             </div>
-      
           </div>
-        </div>
-        <div className="col-6">
-          <div className="overflow-hidden">
-            <div className="card" style={{ overflowY: 'scroll', height: '100%', width : '100%'}}>
-              <div className="card-header">
-                <h2>Chat </h2>
+          <div className="col-9">
+            <div className="rounded-xl shadow-lg" style={{ backgroundColor: 'white', height: '100vh', overflow: 'hidden' }}>
+              <div className="chat-container overflow-auto" style={{ height: '60%', padding: '10px', position: 'relative' }}>
+                {messages.map((msg, index) => renderMessage(msg, index))}
               </div>
-              <div className="card-body d-flex flex-column" style={{ height: '400px' }}>
-                <div className="mb-3 flex-grow-1" style={{ overflowY: 'scroll', border: '1px solid #ccc', padding: '10px' }}>
-                  {messages.map((msg, index) => renderMessage(msg, index))}
-                </div>
-                <div className="input-group mb-3">
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Hier Nachricht eintragen.."
-                  />
-                  <div className="input-group-append">
-                    <button onClick={sendMessage} className="btn btn-primary" disabled={!input || !apiKey}>Senden</button>
+              <div className="container-fluid d-flex justify-content-center align-items-end" style={{ height: '20%' }}>
+                <div className="position-fixed bottom-0 mb-3 p-2 rounded-l shadow" style={{ width: '60%', left: '60%', transform: 'translateX(-50%)', background: 'linear-gradient(white, rgba(255, 255, 255, 0))' }}>
+                  <Dictaphone sendMessage={sendMessage} dictaphoneState={dictaphoneState} disabled={!apiKey} />
+                  <div className="input-group mt-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder="Hier Nachricht eintragen.."
+                    />
+                    <div className="input-group-append">
+                      <button onClick={() => sendMessage(input)} className="btn btn-primary" disabled={!input || !apiKey}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
+                          <path fillRule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-                {error && <div className="alert alert-danger mt-3">{error}</div>}
               </div>
             </div>
           </div>
@@ -151,6 +158,6 @@ const ChatWindow = () => {
       </div>
     </div>
   );
-  
-};  
+};
+
 export default ChatWindow;

@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/llm-patient-simulation-frontend/static/css/main.cfccadea.chunk.css",
+    "main.js": "/llm-patient-simulation-frontend/static/js/main.9a339374.chunk.js",
+    "main.js.map": "/llm-patient-simulation-frontend/static/js/main.9a339374.chunk.js.map",
+    "runtime-main.js": "/llm-patient-simulation-frontend/static/js/runtime-main.9cb5dd00.js",
+    "runtime-main.js.map": "/llm-patient-simulation-frontend/static/js/runtime-main.9cb5dd00.js.map",
+    "static/css/2.98036eff.chunk.css": "/llm-patient-simulation-frontend/static/css/2.98036eff.chunk.css",
+    "static/js/2.de1ae571.chunk.js": "/llm-patient-simulation-frontend/static/js/2.de1ae571.chunk.js",
+    "static/js/2.de1ae571.chunk.js.map": "/llm-patient-simulation-frontend/static/js/2.de1ae571.chunk.js.map",
+    "static/js/3.e4410f6b.chunk.js": "/llm-patient-simulation-frontend/static/js/3.e4410f6b.chunk.js",
+    "static/js/3.e4410f6b.chunk.js.map": "/llm-patient-simulation-frontend/static/js/3.e4410f6b.chunk.js.map",
+    "index.html": "/llm-patient-simulation-frontend/index.html",
+    "precache-manifest.9a0e55df9c469ae69da2b52dc0562498.js": "/llm-patient-simulation-frontend/precache-manifest.9a0e55df9c469ae69da2b52dc0562498.js",
+    "service-worker.js": "/llm-patient-simulation-frontend/service-worker.js",
+    "static/css/2.98036eff.chunk.css.map": "/llm-patient-simulation-frontend/static/css/2.98036eff.chunk.css.map",
+    "static/css/main.cfccadea.chunk.css.map": "/llm-patient-simulation-frontend/static/css/main.cfccadea.chunk.css.map",
+    "static/js/2.de1ae571.chunk.js.LICENSE.txt": "/llm-patient-simulation-frontend/static/js/2.de1ae571.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.9cb5dd00.js",
+    "static/css/2.98036eff.chunk.css",
+    "static/js/2.de1ae571.chunk.js",
+    "static/css/main.cfccadea.chunk.css",
+    "static/js/main.9a339374.chunk.js"
+  ]
+}
