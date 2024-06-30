@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Dictaphone from './helperFunctions/Dictaphone';
-import { createAudioStreamFromText } from './helperFunctions/audioStreamFromText';
+// import { createAudioStreamFromText } from './helperFunctions/audioStreamFromText';
 
 const ChatWindow = () => {
   const [messages, setMessages] = useState([]);
@@ -9,7 +9,15 @@ const ChatWindow = () => {
   const [vignette, setVignette] = useState('Astrid Seeger');
   const [apiKey, setApiKey] = useState('');
   const [dictaphoneState, setDictaphoneState] = useState(1);
-  const [voiceGenState, setVoiceGenState] = useState(true)
+  // const [voiceGenState, setVoiceGenState] = useState(true)
+
+  const chatContainerRef = useRef(null); // Ref für den Chat-Container
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]); // Scrollen bei Änderung der Nachrichten
 
   const handleButtonClick = async (name) => {
     try {
@@ -48,7 +56,6 @@ const ChatWindow = () => {
           'accept': 'application/json'
         }
       }); 
-      setDictaphoneState(1);
       if (!response.ok) {
         throw new Error('Failed to retrieve answer');
       }
@@ -56,9 +63,9 @@ const ChatWindow = () => {
       setMessages([...messages, { user: 'Me', text: message }, { user: 'Bot', text: data.answer }]);
       setInput('');
       setDictaphoneState(1); // Reset dictaphone state after successful message
-      if (voiceGenState){
-        createAudioStreamFromText(data.answer);
-      }
+      // if (voiceGenState){
+      //   createAudioStreamFromText(data.answer);
+      // }
 
     } catch (error) {
       console.error('Error sending message:', error);
@@ -120,7 +127,7 @@ const ChatWindow = () => {
                   </div>
                 </div>
                 <div className="form-check form-switch">
-                  <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" onInput={setVoiceGenState}/>
+                  { <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"  /* onInput={ setVoiceGenState} */ /> }
                   <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Audio generieren</label>
                 </div>
               </div>

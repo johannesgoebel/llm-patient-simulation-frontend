@@ -10,8 +10,12 @@ const Dictaphone = ({ sendMessage, dictaphoneState }) => {
   } = useSpeechRecognition();
 
   if (!browserSupportsSpeechRecognition) {
-    return <span>Browser doesn't support speech recognition.</span>;
+    return <span>Browser doesn't support speech recognition. This app is primarily developed for Google Chrome.</span>;
   }
+
+  function timeout(delay) {
+    return new Promise( res => setTimeout(res, delay) );
+}
   const renderIcon = () => {
     switch (dictaphoneState) {
       case 1:
@@ -19,7 +23,8 @@ const Dictaphone = ({ sendMessage, dictaphoneState }) => {
           <MicIcon/>
         );
       case 2:
-        return <div className="pulsating-button"></div>;
+        return <div class="spinner-border text-light" role="status">
+      </div>;
       case 3:
         return (
           <SoundIcon/>
@@ -28,11 +33,8 @@ const Dictaphone = ({ sendMessage, dictaphoneState }) => {
         return null;
     }
   };
-  // Define input and apiKey or pass them as props or state
-  const input = true; // This should be replaced with the actual logic
-  const apiKey = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
-
   const handleMouseUp = () => {
+    timeout(3000);
     SpeechRecognition.stopListening();
     sendMessage(transcript);
   };
@@ -44,7 +46,6 @@ const Dictaphone = ({ sendMessage, dictaphoneState }) => {
         style={{ borderRadius: '50%', width: '100px', height: '100px' , margin: '20px'}} 
         onMouseDown={SpeechRecognition.startListening} 
         onMouseUp={handleMouseUp} 
-        disabled={!input || !apiKey}
       >
         {renderIcon()}
       </button>
