@@ -45,9 +45,16 @@ const ChatWindow = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && input) {
+      sendMessage(input);
+    }
+  };
+
   const sendMessage = async (message) => {
     if (!message || !apiKey) return;
     setDictaphoneState(2);
+    setInput('');
     try {
       const url = `https://llm-patient-simulation-backend.vercel.app/retrieve_answer?message=${encodeURIComponent(message)}&api_key=${apiKey}`;
       const response = await fetch(url, {
@@ -147,6 +154,7 @@ const ChatWindow = () => {
                       className="form-control"
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyDown}
                       placeholder="Hier Nachricht eintragen.."
                     />
                     <div className="input-group-append">

@@ -34,7 +34,7 @@ const Dictaphone = ({ sendMessage, dictaphoneState }) => {
     }
   };
   const handleMouseUp = () => {
-    timeout(3000);
+    timeout(5000);
     SpeechRecognition.stopListening();
     sendMessage(transcript);
   };
@@ -49,6 +49,7 @@ const Dictaphone = ({ sendMessage, dictaphoneState }) => {
       >
         {renderIcon()}
       </button>
+      <p class="text-primary">Zur Spracheingabe Button drücken und halten</p>
     </div>
   );
 };
