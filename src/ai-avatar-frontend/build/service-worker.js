@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/llm-patient-simulation-frontend/precache-manifest.13269b64230bd26a86312164c2ab3c48.js"
+  "/llm-patient-simulation-frontend/precache-manifest.977daa1725a7946ace1cf3216d00121d.js"
 );
 
 self.addEventListener('message', (event) => {

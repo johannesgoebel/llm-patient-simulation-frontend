@@ -117,6 +117,13 @@ const ChatWindow = () => {
                   >
                     Michael Schulze
                   </button>
+                  <button
+                    type="button"
+                    className={`btn btn-lg ${vignette === 'Lieselotte Daenger' ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => handleButtonClick('Lieselotte Daenger')}
+                  >
+                    Lieselotte Dänger
+                  </button>
                 </div>
                 <div className="row mt-3">
                   <div className="mb-3">
