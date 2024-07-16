@@ -1,4 +1,4 @@
-const { ElevenLabsClient } = require("elevenlabs");
+const { ElevenLabsClient, stream } = require("elevenlabs");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -17,18 +17,11 @@ const client = new ElevenLabsClient({
 
 const createAudioStreamFromText = async (text) => {
   const audioStream = await client.generate({
-    voice: "Helmut Schwarz",
-    model_id: "bRIX82ywyYryS8320ZVY",
-    text,
+    voice: "Rachel",
+  text: "Hello! 你好! Hola! नमस्ते! Bonjour! こんにちは! مرحبا! 안녕하세요! Ciao! Cześć! Привіт! வணக்கம்!",
+  model_id: "eleven_multilingual_v2"
   });
-
-  const chunks = [];
-  for await (const chunk of audioStream) {
-    chunks.push(chunk);
-  }
-
-  const content = Buffer.concat(chunks);
-  return content;
+  await stream(audioStream);
 };
 
 module.exports = { createAudioStreamFromText };

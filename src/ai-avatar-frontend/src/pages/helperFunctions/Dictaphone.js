@@ -23,7 +23,7 @@ const Dictaphone = ({ sendMessage, dictaphoneState }) => {
           <MicIcon/>
         );
       case 2:
-        return <div class="spinner-border text-light" role="status">
+        return <div className="spinner-border text-light" role="status">
       </div>;
       case 3:
         return (
@@ -49,7 +49,7 @@ const Dictaphone = ({ sendMessage, dictaphoneState }) => {
       >
         {renderIcon()}
       </button>
-      <p class="text-primary">Zur Spracheingabe Button drücken und halten</p>
+      <p className="text-primary">Zur Spracheingabe Button drücken und halten</p>
     </div>
   );
 };

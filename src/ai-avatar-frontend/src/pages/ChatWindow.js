@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Dictaphone from './helperFunctions/Dictaphone';
 // import { createAudioStreamFromText } from './helperFunctions/audioStreamFromText';
+import {startStreaming} from './helperFunctions/AudioStream';
 
 const ChatWindow = () => {
   const [messages, setMessages] = useState([]);
@@ -9,10 +10,28 @@ const ChatWindow = () => {
   const [vignette, setVignette] = useState('Astrid Seeger');
   const [apiKey, setApiKey] = useState('');
   const [dictaphoneState, setDictaphoneState] = useState(1);
-  // const [voiceGenState, setVoiceGenState] = useState(true)
+  const [voiceGenState, setVoiceGenState] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const dotenv = require("dotenv");
 
+  dotenv.config();
+  const ELEVENLABS_API_KEY = process.env.REACT_APP_ELEVENLABS_API_KEY;
+  console.log(ELEVENLABS_API_KEY);
+
+  if (!ELEVENLABS_API_KEY) {
+    throw new Error("Missing ELEVENLABS_API_KEY in environment variables");
+  }
   const chatContainerRef = useRef(null); // Ref für den Chat-Container
-
+  const voiceIdAstrid = 'pFZP5JQG7iQjIQuC4Bku';
+  const voiceIdMichael = 't0jbNlBVZ17f02VDIeMI';
+  const voiceSettings = {
+  stability: 0.5,
+  similarity_boost: 0.75,
+  style: 1,
+  use_speaker_boost: true,
+  };
+  
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -70,15 +89,31 @@ const ChatWindow = () => {
       setMessages([...messages, { user: 'Me', text: message }, { user: 'Bot', text: data.answer }]);
       setInput('');
       setDictaphoneState(1); // Reset dictaphone state after successful message
-      // if (voiceGenState){
-      //   createAudioStreamFromText(data.answer);
-      // }
+      if (voiceGenState) {
+        var voiceId = '';
+        if(vignette == 'Michael Schulze'){
+          voiceId = voiceIdMichael;
+        }else{
+          voiceId = voiceIdAstrid;
+        }
+
+        startStreaming({
+          voiceId, 
+          text: data.answer,
+          apiKey: ELEVENLABS_API_KEY,
+          voiceSettings,
+          onLoading: setLoading, // you need to define setLoading state
+          onError: setError // you need to define setError state
+        });
+      }
 
     } catch (error) {
       console.error('Error sending message:', error);
     }
   };
-
+  const handleInputChange = () => {
+    setVoiceGenState(!voiceGenState);
+  };
   const renderMessage = (msg, index) => {
     const isUser = msg.user === 'Me';
     return (
@@ -141,8 +176,17 @@ const ChatWindow = () => {
                   </div>
                 </div>
                 <div className="form-check form-switch">
-                  { <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"  /* onInput={ setVoiceGenState} */ /> }
-                  <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Audio generieren</label>
+                  <input 
+                    className="form-check-input" 
+                    type="checkbox" 
+                    role="switch" 
+                    id="flexSwitchCheckDefault" 
+                    onInput={handleInputChange} 
+                    checked={voiceGenState}
+                  />
+                  <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+                    Audio generieren
+                  </label>
                 </div>
               </div>
             </div>
