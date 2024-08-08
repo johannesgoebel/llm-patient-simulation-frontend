@@ -4,13 +4,23 @@ import Dictaphone from './helperFunctions/Dictaphone';
 // import { createAudioStreamFromText } from './helperFunctions/audioStreamFromText';
 import {startStreaming} from './helperFunctions/AudioStream';
 
-const ChatWindow = () => {
+const vignetteMap = {
+  'astrid-seeger': 'Astrid Seeger',
+  'michael-schulze': 'Michael Schulze',
+  'lieselotte-daenger': 'Lieselotte Daenger',
+};
+
+const ChatWindow = ({ vignette }) => {
+
+  console.log('Vignette parameter:', vignette); // Debugging line to check the value
+
+  const vignetteName = vignetteMap[vignette] || 'Unknown Vignette'; // Default to 'Unknown Vignette' if not found
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  const [vignette, setVignette] = useState('Astrid Seeger');
+  // const [vignette, setVignette] = useState('Astrid Seeger');
   const [apiKey, setApiKey] = useState('');
   const [dictaphoneState, setDictaphoneState] = useState(1);
-  const [voiceGenState, setVoiceGenState] = useState(false)
+  const [voiceGenState, setVoiceGenState] = useState(true)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const dotenv = require("dotenv");
@@ -38,7 +48,13 @@ const ChatWindow = () => {
     }
   }, [messages]); // Scrollen bei Änderung der Nachrichten
 
-  const handleButtonClick = async (name) => {
+  useEffect(() => {
+    if (vignetteName) {
+      loadVignette(vignetteName);
+    }
+  }, [vignetteName]);
+
+  const loadVignette = async (name) => {
     try {
       const url = `https://llm-patient-simulation-backend.vercel.app/conversation/vignette?name=${encodeURIComponent(name)}`;
       const response = await fetch(url, {
@@ -46,7 +62,7 @@ const ChatWindow = () => {
       });
 
       if (response.ok) {
-        setVignette(name);
+        //setVignette(name);
         setMessages([]);
       } else {
         // Handle errors
@@ -91,7 +107,7 @@ const ChatWindow = () => {
       setDictaphoneState(1); // Reset dictaphone state after successful message
       if (voiceGenState) {
         var voiceId = '';
-        if(vignette == 'Michael Schulze'){
+        if(vignetteName == 'Michael Schulze'){
           voiceId = voiceIdMichael;
         }else{
           voiceId = voiceIdAstrid;
@@ -135,9 +151,10 @@ const ChatWindow = () => {
         <div className="row" style={{ width: "100%" }}>
           <div className="col-3">
             <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={{ color: '#faf8ff', height: '100vh' }}>
-              <div>
-                <h4 style={{ margin: "20px" }}>Auswahl der Fallvignette</h4>
-                <div className="row">
+               <div>
+                <h4 style={{ margin: "20px" }}>{vignetteName}</h4>
+                
+                {/* <div className="row">
                   <button
                     type="button"
                     className={`btn btn-lg ${vignette === 'Astrid Seeger' ? 'btn-primary' : 'btn-secondary'}`}
@@ -159,7 +176,7 @@ const ChatWindow = () => {
                   >
                     Lieselotte Dänger
                   </button>
-                </div>
+                </div> */}
                 <div className="row mt-3">
                   <div className="mb-3">
                     <label htmlFor="apiKeyInput" className="form-label">
@@ -188,7 +205,7 @@ const ChatWindow = () => {
                     Audio generieren
                   </label>
                 </div>
-              </div>
+              </div> 
             </div>
           </div>
           <div className="col-9">
