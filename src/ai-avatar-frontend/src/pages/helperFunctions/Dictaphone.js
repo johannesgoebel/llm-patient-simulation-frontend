@@ -10,7 +10,7 @@ const Dictaphone = ({ sendMessage, dictaphoneState }) => {
   } = useSpeechRecognition();
 
   if (!browserSupportsSpeechRecognition) {
-    return <span>Browser doesn't support speech recognition. This app is primarily developed for Google Chrome.</span>;
+    return <span>Dieser Browser unterstützt keine Spracherkennung. Diese App ist primär für Google Chrome und andere Chromium-basierte Browser entwickelt.</span>;
   }
 
   function timeout(delay) {
@@ -34,23 +34,25 @@ const Dictaphone = ({ sendMessage, dictaphoneState }) => {
     }
   };
   const handleMouseUp = () => {
-    timeout(5000);
+    timeout(7000);
     SpeechRecognition.stopListening();
     sendMessage(transcript);
   };
 
   return (
-    <div className="chat-input-container  d-flex flex-column align-items-center">
-      <button 
-        className="round-button btn btn-primary dictaphone-button" 
-        style={{ borderRadius: '50%', width: '100px', height: '100px' , margin: '20px'}} 
-        onMouseDown={SpeechRecognition.startListening} 
-        onMouseUp={handleMouseUp} 
-      >
-        {renderIcon()}
-      </button>
-      <p className="text-primary">Zur Spracheingabe Button drücken und halten</p>
+    <div className="chat-input-container d-flex justify-content-center align-items-center">
+    <div className="d-flex align-items-center">
+        <button 
+            className="round-button btn btn-primary dictaphone-button" 
+            style={{ borderRadius: '50%', width: '100px', height: '100px', margin: '10px' }} 
+            onMouseDown={SpeechRecognition.startListening} 
+            onMouseUp={handleMouseUp} 
+        >
+            {renderIcon()}
+        </button>
+        <p className="text-primary" style={{ margin: '0 0 0 10px' }}>Zur Spracheingabe Button drücken und halten</p>
     </div>
+</div>
   );
 };
 

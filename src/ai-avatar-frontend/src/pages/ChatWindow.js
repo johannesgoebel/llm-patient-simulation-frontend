@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Dictaphone from './helperFunctions/Dictaphone';
 // import { createAudioStreamFromText } from './helperFunctions/audioStreamFromText';
 import {startStreaming} from './helperFunctions/AudioStream';
+import Sidepanel from './helperFunctions/Sidepanel';
 
 const vignetteMap = {
   'astrid-seeger': 'Astrid Seeger',
@@ -11,8 +12,6 @@ const vignetteMap = {
 };
 
 const ChatWindow = ({ vignette }) => {
-
-  console.log('Vignette parameter:', vignette); // Debugging line to check the value
 
   const vignetteName = vignetteMap[vignette] || 'Unknown Vignette'; // Default to 'Unknown Vignette' if not found
   const [messages, setMessages] = useState([]);
@@ -146,52 +145,24 @@ const ChatWindow = ({ vignette }) => {
   };
 
   return (
-    <div>
-      <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', overflow: 'hidden', background: '#696969' }}>
+    <div style={{ maxHeightHeight: '100vh'}}>
+      <nav class="navbar bg-dark border-bottom border-body h-10" data-bs-theme="dark">
+        <div class="container-fluid">
+          <span class="navbar-text">
+            Einsatz KI-basierter Patientensimulationen in der medizinischen Lehre
+          </span>
+        </div>
+      </nav>
+      <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: '90vh', overflow: 'hidden', background: '#696969' }}>
         <div className="row" style={{ width: "100%" }}>
           <div className="col-3">
-            <div className="h-100 d-flex flex-column justify-content-center align-items-center" style={{ color: '#faf8ff', height: '100vh' }}>
+            <div className="h-90 d-flex flex-column justify-content-center align-items-center" style={{ color: '#faf8ff', height: '90vh' }}>
                <div>
-                <h4 style={{ margin: "20px" }}>{vignetteName}</h4>
-                
-                {/* <div className="row">
-                  <button
-                    type="button"
-                    className={`btn btn-lg ${vignette === 'Astrid Seeger' ? 'btn-primary' : 'btn-secondary'}`}
-                    onClick={() => handleButtonClick('Astrid Seeger')}
-                  >
-                    Astrid Seeger
-                  </button>
-                  <button
-                    type="button"
-                    className={`btn btn-lg ${vignette === 'Michael Schulze' ? 'btn-primary' : 'btn-secondary'}`}
-                    onClick={() => handleButtonClick('Michael Schulze')}
-                  >
-                    Michael Schulze
-                  </button>
-                  <button
-                    type="button"
-                    className={`btn btn-lg ${vignette === 'Lieselotte Daenger' ? 'btn-primary' : 'btn-secondary'}`}
-                    onClick={() => handleButtonClick('Lieselotte Daenger')}
-                  >
-                    Lieselotte Dänger
-                  </button>
-                </div> */}
-                <div className="row mt-3">
-                  <div className="mb-3">
-                    <label htmlFor="apiKeyInput" className="form-label">
-                      <h4 style={{ margin: "20px" }}>API Key</h4>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="apiKeyInput"
-                      placeholder="Hier Key einfügen"
-                      value={apiKey}
-                      onChange={handleApiKeyChange}
-                    />
-                  </div>
-                </div>
+                <Sidepanel 
+                  vignetteName={vignetteName}
+                  apiKey={apiKey}
+                  handleApiKeyChange={handleApiKeyChange}
+                /> 
                 <div className="form-check form-switch">
                   <input 
                     className="form-check-input" 
@@ -201,21 +172,47 @@ const ChatWindow = ({ vignette }) => {
                     onInput={handleInputChange} 
                     checked={voiceGenState}
                   />
-                  <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
-                    Audio generieren
-                  </label>
+                  {/* <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+                    Audio generieren 
+                  </label> */}
+                  <label className="form-check-label" htmlFor="flexSwitchCheckDefault" style={{ display: 'flex', alignItems: 'center' }}>
+                        <p style={{ margin: "0 10px 0 0" }}>Audio generieren </p>
+                        <span className="d-inline-block" tabIndex="0" data-toggle="tooltip" title="Der API-Key kann der LimeSurvey Umfrage entnommen werden.">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-info-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                            </svg>
+                        </span>
+                    </label>
                 </div>
               </div> 
             </div>
           </div>
           <div className="col-9">
             <div className="rounded-xl shadow-lg" style={{ backgroundColor: 'white', height: '100vh', overflow: 'hidden' }}>
-              <div className="chat-container overflow-auto" style={{ height: '60%', padding: '10px', position: 'relative' }}>
-                {messages.map((msg, index) => renderMessage(msg, index))}
-              </div>
+            <div className="chat-container overflow-auto" style={{ height: '60%', padding: '10px', position: 'relative' }}>
+                {messages.length > 0 ? (
+                    messages.map((msg, index) => renderMessage(msg, index))
+                ) : (
+                    <div class="m-4">
+                      <h3>Dies ist die KI-basierte Patientensimulation</h3>
+                      <p class="lead">
+                          Sie sind eingeladen, ein Anamnesegespräch mit einem simulierten Patienten zu führen. Diese Simulation soll Ihnen die Möglichkeit geben, Ihre Fähigkeiten in der Gesprächsführung und Diagnosestellung zu testen und zu verbessern.
+                      </p>
+                      <p class="text-muted">
+                          Starten Sie das Gespräch, indem Sie den Patienten begrüßen oder eine Frage stellen.
+                      </p>
+                    </div>
+                )}
+            </div>
+
               <div className="container-fluid d-flex justify-content-center align-items-end" style={{ height: '20%' }}>
                 <div className="position-fixed bottom-0 mb-3 p-2 rounded-l shadow" style={{ width: '60%', left: '60%', transform: 'translateX(-50%)', background: 'linear-gradient(white, rgba(255, 255, 255, 0))' }}>
-                  <Dictaphone sendMessage={sendMessage} dictaphoneState={dictaphoneState} disabled={!apiKey} />
+                  <Dictaphone 
+                    sendMessage={sendMessage} 
+                    dictaphoneState={dictaphoneState} 
+                    disabled={!apiKey} 
+                  />
                   <div className="input-group mt-3">
                     <input
                       type="text"
@@ -223,7 +220,7 @@ const ChatWindow = ({ vignette }) => {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      placeholder="Hier Nachricht eintragen.."
+                      placeholder="Anamnesegespräch mit Patienten durch Text- oder Spracheingabe beginnen."
                     />
                     <div className="input-group-append">
                       <button onClick={() => sendMessage(input)} className="btn btn-primary" disabled={!input || !apiKey}>
