@@ -32,8 +32,9 @@ const ChatWindow = ({ vignette }) => {
     throw new Error("Missing ELEVENLABS_API_KEY in environment variables");
   }
   const chatContainerRef = useRef(null); // Ref für den Chat-Container
-  const voiceIdAstrid = 'pFZP5JQG7iQjIQuC4Bku';
+  const voiceIdAstrid = 'cgSgspJ2msm6clMCkdW9';
   const voiceIdMichael = 't0jbNlBVZ17f02VDIeMI';
+  const voiceIdLieselotte = 'pFZP5JQG7iQjIQuC4Bku';
   const voiceSettings = {
   stability: 0.5,
   similarity_boost: 0.75,
@@ -108,7 +109,14 @@ const ChatWindow = ({ vignette }) => {
         var voiceId = '';
         if(vignetteName == 'Michael Schulze'){
           voiceId = voiceIdMichael;
-        }else{
+        }
+        if(vignetteName == 'Astrid Seeger'){
+          voiceId = voiceIdAstrid;
+        }
+        if(vignetteName == 'Lieselotte Dänger'){
+          voiceId = voiceIdLieselotte;
+        }
+        else{
           voiceId = voiceIdAstrid;
         }
 
