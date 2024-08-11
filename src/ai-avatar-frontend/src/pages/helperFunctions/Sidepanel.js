@@ -10,7 +10,7 @@ const Sidepanel = ({ vignetteName, apiKey, handleApiKeyChange }) => {
                 return <img src={img_michael} className="img-fluid rounded" alt="Michael Schulze" />;
             case "Astrid Seeger":
                 return <img src={img_astrid} className="img-fluid rounded" alt="Astrid Seeger" />;
-            case "Lieselotte Daenger":
+            case "Lieselotte Dänger":
                 return <img src={img_lieselotte} className="img-fluid rounded" alt="Lieselotte Dänger" />;
             default:
                 return <div></div>;
@@ -19,7 +19,7 @@ const Sidepanel = ({ vignetteName, apiKey, handleApiKeyChange }) => {
 
     return (
         <div>
-            <h4 style={{ margin: "20px" }}>{vignetteName}</h4>
+            <h1 style={{ margin: "20px" }}>{vignetteName}</h1>
             {renderImage(vignetteName)}
             <div className="row mt-3">
                 <div className="mb-3">

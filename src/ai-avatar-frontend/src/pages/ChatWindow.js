@@ -8,7 +8,7 @@ import Sidepanel from './helperFunctions/Sidepanel';
 const vignetteMap = {
   'astrid-seeger': 'Astrid Seeger',
   'michael-schulze': 'Michael Schulze',
-  'lieselotte-daenger': 'Lieselotte Daenger',
+  'lieselotte-daenger': 'Lieselotte Dänger',
 };
 
 const ChatWindow = ({ vignette }) => {
@@ -153,7 +153,7 @@ const ChatWindow = ({ vignette }) => {
   };
 
   return (
-    <div style={{ maxHeightHeight: '100vh'}}>
+    <div style={{ maxHeight: '100vh', overflow: 'hidden'}}>
       <nav class="navbar bg-dark border-bottom border-body h-10" data-bs-theme="dark">
         <div class="container-fluid">
           <span class="navbar-text">
