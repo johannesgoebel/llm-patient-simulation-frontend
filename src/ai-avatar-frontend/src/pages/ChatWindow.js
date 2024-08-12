@@ -10,6 +10,28 @@ const vignetteMap = {
   'michael-schulze': 'Michael Schulze',
   'lieselotte-daenger': 'Lieselotte Dänger',
 };
+function generateUUID() {
+  return crypto.randomUUID();
+};
+function checkAndSetSessionID() {
+  const sessionIDKey = 'sessionID';
+  
+  // Check if sessionID is already in localStorage
+  let sessionID = localStorage.getItem(sessionIDKey);
+  console.log(sessionID);
+  
+  if (!sessionID) {
+      // If sessionID doesn't exist, generate a new one
+      sessionID = generateUUID();
+      
+      // Store the new sessionID in localStorage
+      localStorage.setItem(sessionIDKey, sessionID);
+  }
+
+  // Return the sessionID (whether newly generated or existing)
+  return sessionID;
+};
+
 
 const ChatWindow = ({ vignette }) => {
 
@@ -41,7 +63,11 @@ const ChatWindow = ({ vignette }) => {
   style: 1,
   use_speaker_boost: true,
   };
-  
+
+    useEffect(() => {
+    const sessionID = checkAndSetSessionID();
+    console.log('Session ID:', sessionID);
+}, []);
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -53,6 +79,7 @@ const ChatWindow = ({ vignette }) => {
       loadVignette(vignetteName);
     }
   }, [vignetteName]);
+
 
   const loadVignette = async (name) => {
     try {
