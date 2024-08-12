@@ -64,10 +64,11 @@ const ChatWindow = ({ vignette }) => {
   use_speaker_boost: true,
   };
 
-    useEffect(() => {
-    const sessionID = checkAndSetSessionID();
-    console.log('Session ID:', sessionID);
-}, []);
+  useEffect(() => {
+    const sessionId = checkAndSetSessionID();
+    console.log('Session ID:', sessionId);
+}, [sessionId]);
+
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -82,11 +83,11 @@ const ChatWindow = ({ vignette }) => {
 
 
   const loadVignette = async (name) => {
-    try {
-      const url = `https://llm-patient-simulation-backend.vercel.app/conversation/vignette?name=${encodeURIComponent(name)}`;
-      const response = await fetch(url, {
-        method: 'POST'
-      });
+      try {
+        const url = `https://llm-patient-simulation-backend.vercel.app/conversation/vignette?name=${encodeURIComponent(name)}&session_id=${encodeURIComponent(sessionId)}`;
+        const response = await fetch(url, {
+          method: 'POST'
+        });
 
       if (response.ok) {
         //setVignette(name);
@@ -118,13 +119,14 @@ const ChatWindow = ({ vignette }) => {
     setDictaphoneState(2);
     setInput('');
     try {
-      const url = `https://llm-patient-simulation-backend.vercel.app/retrieve_answer?message=${encodeURIComponent(message)}&api_key=${apiKey}`;
+      const url = `https://llm-patient-simulation-backend.vercel.app/retrieve_answer?message=${encodeURIComponent(message)}&api_key=${apiKey}&session_id=${encodeURIComponent(sessionId)}`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'accept': 'application/json'
         }
-      }); 
+      });
+      
       if (!response.ok) {
         throw new Error('Failed to retrieve answer');
       }
