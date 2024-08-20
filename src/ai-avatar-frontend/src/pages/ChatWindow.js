@@ -45,7 +45,8 @@ const ChatWindow = ({ vignette }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const dotenv = require("dotenv");
-
+  const sessionId = checkAndSetSessionID(); // Make sure this function is correctly implemented to return a session ID
+  
   dotenv.config();
   const ELEVENLABS_API_KEY = process.env.REACT_APP_ELEVENLABS_API_KEY;
   console.log(ELEVENLABS_API_KEY);
@@ -75,38 +76,31 @@ const ChatWindow = ({ vignette }) => {
     }
   }, [messages]); // Scrollen bei Änderung der Nachrichten
 
-  useEffect(() => {
-    if (vignetteName) {
-      loadVignette(vignetteName);
-    }
-  }, [vignetteName]);
+  // const loadVignette = async (name) => {
+  //     try {
+  //       const url = `https://llm-patient-simulation-backend.vercel.app/conversation/vignette?name=${encodeURIComponent(name)}&session_id=${encodeURIComponent(sessionId)}`;
+  //       const response = await fetch(url, {
+  //         method: 'POST'
+  //       });
 
-
-  const loadVignette = async (name) => {
-      try {
-        const url = `https://llm-patient-simulation-backend.vercel.app/conversation/vignette?name=${encodeURIComponent(name)}&session_id=${encodeURIComponent(sessionId)}`;
-        const response = await fetch(url, {
-          method: 'POST'
-        });
-
-      if (response.ok) {
-        //setVignette(name);
-        setMessages([]);
-      } else {
-        // Handle errors
-        if (response.status === 0) {
-          console.error('Failed to update vignette: CORS issue detected.');
-        } else if (!response.ok && !response.status) {
-          console.error('Failed to update vignette: Network error.');
-        } else {
-          const errorMessage = await response.text();
-          console.error(`Failed to update vignette: ${response.status} - ${errorMessage}`);
-        }
-      }
-    } catch (error) {
-      console.error('Error:', error.message);
-    }
-  };
+  //     if (response.ok) {
+  //       //setVignette(name);
+  //       setMessages([]);
+  //     } else {
+  //       // Handle errors
+  //       if (response.status === 0) {
+  //         console.error('Failed to update vignette: CORS issue detected.');
+  //       } else if (!response.ok && !response.status) {
+  //         console.error('Failed to update vignette: Network error.');
+  //       } else {
+  //         const errorMessage = await response.text();
+  //         console.error(`Failed to update vignette: ${response.status} - ${errorMessage}`);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error('Error:', error.message);
+  //   }
+  // };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && input) {
@@ -119,14 +113,14 @@ const ChatWindow = ({ vignette }) => {
     setDictaphoneState(2);
     setInput('');
     try {
-      const url = `https://llm-patient-simulation-backend.vercel.app/retrieve_answer?message=${encodeURIComponent(message)}&api_key=${apiKey}&session_id=${encodeURIComponent(sessionId)}`;
+      const url = `https://llm-patient-simulation-backend.vercel.app/retrieve_answer?message=${encodeURIComponent(message)}&api_key=${apiKey}&session_id=${encodeURIComponent(sessionId)}&case_report_id=${encodeURIComponent(vignetteName)}`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'accept': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to retrieve answer');
       }
