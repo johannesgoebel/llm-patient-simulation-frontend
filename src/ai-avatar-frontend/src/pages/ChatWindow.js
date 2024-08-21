@@ -87,12 +87,20 @@ const ChatWindow = ({ vignette }) => {
     if (!sessionId || !vignetteName) return;
 
     try {
-      const response = await fetch(`https://your-backend-url/conversation/load_messages?session_id=${encodeURIComponent(sessionId)}&case_report_id=${encodeURIComponent(vignetteName)}`);
+      const response = await fetch(`https://llm-patient-simulation-backend.vercel.app/conversation/load_messages?session_id=${encodeURIComponent(sessionId)}&case_report_id=${encodeURIComponent(vignetteName)}`);
       if (!response.ok) {
         throw new Error('Failed to load messages');
       }
       const data = await response.json();
-      setMessages(data.response); // Update the messages state
+      console.log(data);
+      const apiMessages = data.response.map(([sender, text]) => ({
+        user: sender === 'Arzt' ? 'Me' : sender,
+        text: text
+    }));
+    
+    // Update the messages state by adding all the API messages
+    setMessages([...messages, ...apiMessages]);
+
     } catch (error) {
       console.error('Error loading messages:', error);
       setError('Failed to load messages');
@@ -192,59 +200,66 @@ const ChatWindow = ({ vignette }) => {
 
   return (
     <div style={{ maxHeight: '100vh', overflow: 'hidden'}}>
-      <nav class="navbar bg-dark border-bottom border-body h-10" data-bs-theme="dark">
-        <div class="container-fluid">
-          <span class="navbar-text">
+      <nav className="navbar bg-dark border-bottom border-body h-10" data-bs-theme="dark">
+        <div className="container-fluid">
+          <span className="navbar-text">
             Einsatz KI-basierter Patientensimulationen in der medizinischen Lehre
           </span>
         </div>
       </nav>
-      <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: '90vh', overflow: 'hidden', background: '#696969' }}>
+      <div className="container-fluid d-flex justify-content-center align-items-start" style={{ minHeight: '90vh', overflow: 'hidden', background: '#696969' }}>
         <div className="row" style={{ width: "100%" }}>
-          <div className="col-3">
-            <div className="h-90 d-flex flex-column justify-content-center align-items-center" style={{ color: '#faf8ff', height: '90vh' }}>
-               <div>
-                <Sidepanel 
+        <div className="col-3">
+          <div className="h-90 d-flex flex-column justify-content-between align-items-start" style={{ color: '#faf8ff', height: '90vh'}}>
+              <Sidepanel 
                   vignetteName={vignetteName}
                   apiKey={apiKey}
                   handleApiKeyChange={handleApiKeyChange}
-                /> 
-                <div className="form-check form-switch">
-                  <input 
-                    className="form-check-input" 
-                    type="checkbox" 
-                    role="switch" 
-                    id="flexSwitchCheckDefault" 
-                    onInput={handleInputChange} 
-                    checked={voiceGenState}
-                  />
-                  <label className="form-check-label" htmlFor="flexSwitchCheckDefault" style={{ display: 'flex', alignItems: 'center' }}>
-                        <p style={{ margin: "0 10px 0 0" }}>Audio generieren </p>
-                        <span className="d-inline-block" tabIndex="0" data-toggle="tooltip" title="Der API-Key kann der LimeSurvey Umfrage entnommen werden.">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-info-circle" viewBox="0 0 16 16">
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
-                            </svg>
-                        </span>
-                    </label>
-                </div> 
-                <button type="button" class="btn btn-secondary btn-lg" onClick={clearConversation}>Gesprächsverläufe löschen</button>
-              </div> 
-            </div>
+              />
+              <div className="w-100 d-flex flex-column align-items-start">
+                  <div className="form-check form-switch mb-3">
+                      <input 
+                          className="form-check-input" 
+                          type="checkbox" 
+                          role="switch" 
+                          id="flexSwitchCheckDefault" 
+                          onInput={handleInputChange} 
+                          checked={voiceGenState}
+                      />
+                      <label className="form-check-label" htmlFor="flexSwitchCheckDefault" style={{ display: 'flex', alignItems: 'center' }}>
+                          <p style={{ margin: "0 10px 0 0" }}>Audio generieren</p>
+                          <span className="d-inline-block" tabIndex="0" data-toggle="tooltip" title="Neben der schriftlichen Ausgabe der Patientenäußerungen gibt es eine Sprachausgabe.">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-info-circle" viewBox="0 0 16 16">
+                                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                              </svg>
+                          </span>
+                      </label>
+                  </div>
+                  <div className="">
+                      <button type="button" className="btn btn-primary btn-lg" onClick={clearConversation}>Gesprächsverläufe löschen</button>
+                  </div>
+              </div>
+              
           </div>
+      </div>
+
           <div className="col-9">
             <div className="rounded-xl shadow-lg" style={{ backgroundColor: 'white', height: '100vh', overflow: 'hidden' }}>
             <div className="chat-container overflow-auto" style={{ height: '60%', padding: '10px', position: 'relative' }}>
                 {messages.length > 0 ? (
                     messages.map((msg, index) => renderMessage(msg, index))
                 ) : (
-                    <div class="m-4">
-                      <h3>Dies ist die KI-basierte Patientensimulation</h3>
-                      <p class="lead">
-                          Sie sind eingeladen, ein Anamnesegespräch mit einem simulierten Patienten zu führen. Diese Simulation soll Ihnen die Möglichkeit geben, Ihre Fähigkeiten in der Gesprächsführung und Diagnosestellung zu testen und zu verbessern.
+                    <div className="m-4">
+                      <h3>Willkommen zur KI-gestützten Patientensimulation.</h3>
+                      <p className="lead">
+                      Sie haben die Gelegenheit, ein Anamnesegespräch mit einem virtuellen Patienten zu führen. Diese Simulation dient dazu, Ihre Fähigkeiten in der Gesprächsführung und Diagnosestellung zu üben und zu optimieren.
                       </p>
-                      <p class="text-muted">
-                          Starten Sie das Gespräch, indem Sie den Patienten begrüßen oder eine Frage stellen.
+                      <p className="text-muted">
+                      Bevor Sie starten, tragen Sie bitte den sogenannten "API-Key" in das unten links angezeigte Feld ein, um die Simulation zu aktivieren.
+                      </p>
+                      <p className="text-muted">
+                      Sobald dies erledigt ist, können Sie das Gespräch beginnen, indem Sie den Patienten begrüßen oder Ihre erste Frage stellen.
                       </p>
                     </div>
                 )}
