@@ -68,6 +68,7 @@ const ChatWindow = ({ vignette }) => {
   useEffect(() => {
     const sessionId = checkAndSetSessionID();
     console.log('Session ID:', sessionId);
+    fetchMessages(sessionId)
 }, [sessionId]);
 
   useEffect(() => {
@@ -76,35 +77,49 @@ const ChatWindow = ({ vignette }) => {
     }
   }, [messages]); // Scrollen bei Änderung der Nachrichten
 
-  // const loadVignette = async (name) => {
-  //     try {
-  //       const url = `https://llm-patient-simulation-backend.vercel.app/conversation/vignette?name=${encodeURIComponent(name)}&session_id=${encodeURIComponent(sessionId)}`;
-  //       const response = await fetch(url, {
-  //         method: 'POST'
-  //       });
-
-  //     if (response.ok) {
-  //       //setVignette(name);
-  //       setMessages([]);
-  //     } else {
-  //       // Handle errors
-  //       if (response.status === 0) {
-  //         console.error('Failed to update vignette: CORS issue detected.');
-  //       } else if (!response.ok && !response.status) {
-  //         console.error('Failed to update vignette: Network error.');
-  //       } else {
-  //         const errorMessage = await response.text();
-  //         console.error(`Failed to update vignette: ${response.status} - ${errorMessage}`);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error('Error:', error.message);
-  //   }
-  // };
-
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && input) {
       sendMessage(input);
+    }
+  };
+
+  const fetchMessages = async (sessionId) => {
+    if (!sessionId || !vignetteName) return;
+
+    try {
+      const response = await fetch(`https://your-backend-url/conversation/load_messages?session_id=${encodeURIComponent(sessionId)}&case_report_id=${encodeURIComponent(vignetteName)}`);
+      if (!response.ok) {
+        throw new Error('Failed to load messages');
+      }
+      const data = await response.json();
+      setMessages(data.response); // Update the messages state
+    } catch (error) {
+      console.error('Error loading messages:', error);
+      setError('Failed to load messages');
+    } finally {
+      setLoading(false); // Set loading to false once done
+    }
+  };
+  const clearConversation = async () => {
+    if (!sessionId) return;
+
+    try {
+      const url = `https://llm-patient-simulation-backend.vercel.app/conversation/clear?session_id=${encodeURIComponent(sessionId)}`
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to clear conversation');
+      }
+      
+      // Clear messages from state
+      setMessages([]);
+    } catch (error) {
+      console.error('Error clearing conversation:', error);
     }
   };
 
@@ -130,13 +145,13 @@ const ChatWindow = ({ vignette }) => {
       setDictaphoneState(1); // Reset dictaphone state after successful message
       if (voiceGenState) {
         var voiceId = '';
-        if(vignetteName == 'Michael Schulze'){
+        if(vignetteName === 'Michael Schulze'){
           voiceId = voiceIdMichael;
         }
-        if(vignetteName == 'Astrid Seeger'){
+        if(vignetteName === 'Astrid Seeger'){
           voiceId = voiceIdAstrid;
         }
-        if(vignetteName == 'Lieselotte Dänger'){
+        if(vignetteName === 'Lieselotte Dänger'){
           voiceId = voiceIdLieselotte;
         }
         else{
@@ -203,9 +218,6 @@ const ChatWindow = ({ vignette }) => {
                     onInput={handleInputChange} 
                     checked={voiceGenState}
                   />
-                  {/* <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
-                    Audio generieren 
-                  </label> */}
                   <label className="form-check-label" htmlFor="flexSwitchCheckDefault" style={{ display: 'flex', alignItems: 'center' }}>
                         <p style={{ margin: "0 10px 0 0" }}>Audio generieren </p>
                         <span className="d-inline-block" tabIndex="0" data-toggle="tooltip" title="Der API-Key kann der LimeSurvey Umfrage entnommen werden.">
@@ -215,7 +227,8 @@ const ChatWindow = ({ vignette }) => {
                             </svg>
                         </span>
                     </label>
-                </div>
+                </div> 
+                <button type="button" class="btn btn-secondary btn-lg" onClick={clearConversation}>Gesprächsverläufe löschen</button>
               </div> 
             </div>
           </div>
