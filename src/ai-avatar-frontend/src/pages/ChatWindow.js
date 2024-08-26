@@ -151,6 +151,7 @@ const ChatWindow = ({ vignette }) => {
       setMessages([...messages, { user: 'Me', text: message }, { user: 'Bot', text: data.answer }]);
       setInput('');
       setDictaphoneState(1); // Reset dictaphone state after successful message
+      console.log(vignetteName);
       if (voiceGenState) {
         var voiceId = '';
         if(vignetteName === 'Michael Schulze'){
@@ -161,10 +162,7 @@ const ChatWindow = ({ vignette }) => {
         }
         if(vignetteName === 'Lieselotte Dänger'){
           voiceId = voiceIdLieselotte;
-        }
-        else{
-          voiceId = voiceIdAstrid;
-        }
+        }        
 
         startStreaming({
           voiceId, 
