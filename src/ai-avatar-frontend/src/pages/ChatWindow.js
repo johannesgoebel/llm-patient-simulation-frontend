@@ -187,7 +187,7 @@ const ChatWindow = ({ vignette }) => {
     const isUser = msg.user === 'Me';
     return (
       <div key={index} className={`d-flex ${isUser ? 'justify-content-end' : 'justify-content-start'} my-2`}>
-        <div className={`p-2 rounded ${isUser ? 'bg-primary text-white' : 'bg-light text-dark'}`} style={{ maxWidth: '70%' }}>
+        <div className={`p-2 rounded ${isUser ? 'bg-primary text-white' : 'bg-light text-dark'}`} style={{ maxWidth: '40%' }}>
            {msg.text}
         </div>
       </div>
